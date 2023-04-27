@@ -2,14 +2,15 @@ package my.edu.utem.ftmk.dad.restorderapp.controller;
  
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpEntity; 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,6 +25,37 @@ public class OrderTypeMenuController {
 	
 	private String defaultURI = "http://localhost:8080/orderapp/api/ordertypes";
 	
+	@GetMapping("/ordertype/{orderTypeId}")
+	public String getOrderType(@PathVariable Integer orderTypeId, Model model) {
+		String pageTitle = "New Order Type";
+		OrderType orderType = new OrderType();
+		if(orderTypeId > 0) {
+			String uri = defaultURI + "/" + orderTypeId;
+			RestTemplate restTemplate = new RestTemplate();
+			orderType = restTemplate.getForObject(uri, OrderType.class);
+			
+			//since ordertypeId specified means is currently editing 
+			pageTitle = "Edit Order Type";
+		}
+		
+		//attach value into template
+		model.addAttribute("orderType",orderType);
+		model.addAttribute("pageTitle",pageTitle);
+		
+		return "ordertypeinfo";
+		
+	}
+	
+	/*
+	 * this method delete an order type by id
+	 */
+	@RequestMapping("/ordertype/delete/{orderTypeId}")
+	public String deleteOrderType(@PathVariable Integer orderTypeId) {
+		String uri = defaultURI + "/{orderTypeId}";
+		RestTemplate restTemplate = new RestTemplate();
+		restTemplate.delete(uri,Map.of("orderTypeId", Integer.toString(orderTypeId)));
+		return "redirect:/ordertype/list";
+	}
 	
 	/*
 	 * This method save changes made to ordertype

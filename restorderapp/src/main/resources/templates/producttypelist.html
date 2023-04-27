@@ -19,7 +19,7 @@
   <div th:replace="fragments/header :: header"></div>
 
   <div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
-    <h2 class="text-center">List of Order Types</h2>
+    <h2 class="text-center">List of Product Types</h2>
 
     <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center message"
       role="alert">
@@ -47,31 +47,29 @@
       </form>
     </div> -->
 
-    <div th:if="${orderTypes.size() > 0}">
+    <div th:if="${productTypes.size() > 0}">
       <table class="table table-hover table-responsive-xl">
         <thead class="thead-light">
           <tr>
-            <th scope="col">Id</th>
-            <th scope="col">Code</th>
+            <th scope="col">Id</th> 
             <th scope="col">Name</th>
              <th scope="col">Action</th>  
           </tr>
         </thead>
         <tbody>
-          <tr th:each="orderType : ${orderTypes}">
-            <th scope="row">[[${orderType.orderTypeId}]]</th>
-            <td>[[${orderType.code}]]</td>
-            <td>[[${orderType.name}]]</td>
+          <tr th:each="pType : ${productTypes}">
+            <th scope="row">[[${pType.productTypeId}]]</th> 
+            <td>[[${pType.name}]]</td>
             <td>
               <!-- A link to edit an order type -->
-               <a th:href="@{'/ordertype/' + ${orderType.orderTypeId}}" 
-              	title="Edit this order type"
+               <a th:href="@{'/producttype/' + ${pType.productTypeId}}" 
+              	title="Edit this product type"
                 class="fa-regular fa-pen-to-square icon-dark"></a>
               &nbsp;
               
               <!-- A link to delete an order type -->
-              <a th:href="@{'/ordertype/delete/' + ${orderType.orderTypeId}}" 
-              th:orderTypeCode="${orderType.code}" id="btnDelete"
+              <a th:href="@{'/producttype/delete/' + ${pType.productTypeId}}" 
+               id="btnDelete" 
                 title="Delete this order type" 
                 class="fa-regular fa-trash-can icon-dark btn-delete"></a>
 
@@ -81,7 +79,7 @@
       </table>
     </div>
 
-    <div class="" th:unless="${orderTypes.size() > 0}">
+    <div class="" th:unless="${productTypes.size() > 0}">
       <span>No record found!</span>
     </div>
   </div>
@@ -114,18 +112,20 @@
     $(document).ready(function () {
       $(".btn-delete").on("click", function (e) {
         e.preventDefault();
-        link = $(this);
-
-        orderTypeCode = link.attr("orderTypeCode");
+        link = $(this); 
+        var row = e.target.parentElement.parentElement;
         $("#yesBtn").attr("href", link.attr("href"));
-        $("#confirmText").html("Do you want to delete the  \<strong\>" + orderTypeCode + "\<\/strong\>?");
+        $("#confirmText").html("Do you want to delete the product type<br>\<strong\>(" 
+        		+ row.children[0].innerHTML
+        		+ ")\<\/strong\> "
+        		+ row.children[1].innerHTML);
         $("#confirmModal").modal();
       });
 
       $("#btnClear").on("click", function (e) {
         e.preventDefault();
         $("#keyword").text("");
-        window.location = "[[@{/ordertype/list}]]";
+        window.location = "[[@{/producttype/list}]]";
       });
     });
   </script>
